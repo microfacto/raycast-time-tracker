@@ -26,31 +26,31 @@ export default function LogTime() {
   const [defaultProjectId, setDefaultProjectId] = useState<string>("");
   const { pop } = useNavigation();
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const projectsList = await getProjects();
-        setProjects(projectsList);
+  async function loadProjects() {
+    try {
+      const projectsList = await getProjects();
+      setProjects(projectsList);
 
-        // Set default to last used project
-        const lastProject = await getLastUsedProject();
-        if (lastProject) {
-          setDefaultProjectId(lastProject.id);
-        } else if (projectsList.length > 0) {
-          setDefaultProjectId(projectsList[0].id);
-        }
-      } catch (error) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: "Failed to load projects",
-          message: String(error),
-        });
-      } finally {
-        setIsLoading(false);
+      // Set default to last used project
+      const lastProject = await getLastUsedProject();
+      if (lastProject) {
+        setDefaultProjectId(lastProject.id);
+      } else if (projectsList.length > 0) {
+        setDefaultProjectId(projectsList[0].id);
       }
+    } catch (error) {
+      await showToast({
+        style: Toast.Style.Failure,
+        title: "Failed to load projects",
+        message: String(error),
+      });
+    } finally {
+      setIsLoading(false);
     }
+  }
 
-    loadData();
+  useEffect(() => {
+    loadProjects();
   }, []);
 
   async function handleSubmit(values: FormValues) {
@@ -108,7 +108,7 @@ export default function LogTime() {
             <Action.Push
               title="Create Project First"
               icon={Icon.Plus}
-              target={<CreateProjectForm onProjectCreated={() => {}} />}
+              target={<CreateProjectForm onProjectCreated={loadProjects} />}
             />
           </ActionPanel>
         }
@@ -128,6 +128,14 @@ export default function LogTime() {
             icon={Icon.Check}
             onSubmit={handleSubmit}
           />
+          <ActionPanel.Section>
+            <Action.Push
+              title="Create New Project"
+              icon={Icon.Plus}
+              shortcut={{ modifiers: ["cmd"], key: "n" }}
+              target={<CreateProjectForm onProjectCreated={loadProjects} />}
+            />
+          </ActionPanel.Section>
         </ActionPanel>
       }
     >
