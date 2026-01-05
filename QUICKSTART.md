@@ -54,7 +54,7 @@ Common alternatives:
 1. Open Raycast (Cmd+Space)
 2. Type "Manage Projects"
 3. Press "Cmd+N" to create a project
-4. Enter name (e.g., "Microfacto") and pick a color
+4. Enter name (e.g., "My Project") and pick a color
 5. Press Enter
 
 ### 2. Log Your First Time Entry

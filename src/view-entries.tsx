@@ -10,11 +10,12 @@ import {
   Color,
   Clipboard,
 } from "@raycast/api";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { format, parseISO, startOfWeek, startOfMonth, endOfWeek, endOfMonth, isWithinInterval } from "date-fns";
 import { getEntries, getProjects, deleteEntry, updateEntry } from "./utils/storage";
 import { formatDuration, formatDurationDetailed } from "./utils/duration";
 import { TimeEntry, Project } from "./utils/types";
+import { getDateFormat } from "./utils/config";
 
 interface EntryWithProject extends TimeEntry {
   project: Project;
@@ -85,7 +86,8 @@ export default function ViewEntries() {
   }
 
   async function handleCopyAsText(entry: EntryWithProject) {
-    const text = `${entry.project.name} - ${format(parseISO(entry.date), "MMM dd, yyyy")} - ${formatDurationDetailed(entry.duration)}${
+    const dateFormat = getDateFormat();
+    const text = `${entry.project.name} - ${format(parseISO(entry.date), dateFormat)} - ${formatDurationDetailed(entry.duration)}${
       entry.comment ? `\n${entry.comment}` : ""
     }`;
 
@@ -126,6 +128,7 @@ export default function ViewEntries() {
   }
 
   const filteredEntries = getFilteredEntries();
+  const dateFormat = getDateFormat();
 
   // Calculate total duration
   const totalHours = filteredEntries.reduce((sum, entry) => sum + entry.duration, 0);
@@ -177,7 +180,7 @@ export default function ViewEntries() {
             {projectEntries.map((entry) => (
               <List.Item
                 key={entry.id}
-                title={format(parseISO(entry.date), "MMM dd, yyyy")}
+                title={format(parseISO(entry.date), dateFormat)}
                 subtitle={entry.comment || "No comment"}
                 icon={{ source: Icon.Circle, tintColor: projectColor }}
                 accessories={[{ text: formatDuration(entry.duration), icon: Icon.Clock }]}

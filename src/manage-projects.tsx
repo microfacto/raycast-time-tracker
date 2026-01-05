@@ -10,7 +10,7 @@ import {
   Form,
   useNavigation,
 } from "@raycast/api";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getProjects, createProject, updateProject, deleteProject } from "./utils/storage";
 import { Project } from "./utils/types";
 
@@ -121,7 +121,7 @@ export default function ManageProjects() {
               key={project.id}
               title={project.name}
               icon={{ source: Icon.Circle, tintColor: project.color }}
-              accessories={project.archived ? [{ text: "Archived", icon: Icon.Archive }] : []}
+              accessories={project.archived ? [{ text: "Archived", icon: Icon.Box }] : []}
               actions={
                 <ActionPanel>
                   <Action.Push
@@ -131,7 +131,7 @@ export default function ManageProjects() {
                   />
                   <Action
                     title={project.archived ? "Unarchive" : "Archive"}
-                    icon={Icon.Archive}
+                    icon={Icon.Box}
                     shortcut={{ modifiers: ["cmd"], key: "a" }}
                     onAction={() => handleToggleArchive(project)}
                   />
@@ -207,7 +207,7 @@ function CreateProjectForm({ onSave }: { onSave: () => void }) {
         </ActionPanel>
       }
     >
-      <Form.TextField id="name" title="Project Name" placeholder="Microfacto" autoFocus />
+      <Form.TextField id="name" title="Project Name" placeholder="My Project" autoFocus />
       <Form.Dropdown id="color" title="Color" defaultValue="#3B82F6">
         <Form.Dropdown.Item value="#EF4444" title="Red" icon={{ source: Icon.Circle, tintColor: "#EF4444" }} />
         <Form.Dropdown.Item value="#F97316" title="Orange" icon={{ source: Icon.Circle, tintColor: "#F97316" }} />

@@ -4,11 +4,89 @@
   "title": "Time Tracker",
   "description": "Simple manual time tracking with local JSON storage",
   "icon": "command-icon.png",
-  "author": "your_name",
+  "author": "julien-microfacto",
+  "owner": "julien-microfacto",
+  "contributors": [
+    "julien-microfacto"
+  ],
   "categories": [
     "Productivity"
   ],
   "license": "MIT",
+  "preferences": [
+    {
+      "name": "dataPath",
+      "title": "Data File Path",
+      "description": "Custom path for data.json (leave empty to auto-detect: Google Drive, Dropbox, iCloud, or ~/Documents)",
+      "type": "textfield",
+      "required": false,
+      "placeholder": "~/Documents/TimeTrack/data.json"
+    },
+    {
+      "name": "dateFormat",
+      "title": "Date Format",
+      "description": "How dates are displayed in the interface",
+      "type": "dropdown",
+      "required": false,
+      "default": "MMM dd, yyyy",
+      "data": [
+        {
+          "title": "Jan 05, 2025 (MMM dd, yyyy)",
+          "value": "MMM dd, yyyy"
+        },
+        {
+          "title": "05/01/2025 (dd/MM/yyyy)",
+          "value": "dd/MM/yyyy"
+        },
+        {
+          "title": "01/05/2025 (MM/dd/yyyy)",
+          "value": "MM/dd/yyyy"
+        },
+        {
+          "title": "2025-01-05 (yyyy-MM-dd)",
+          "value": "yyyy-MM-dd"
+        }
+      ]
+    },
+    {
+      "name": "defaultColor",
+      "title": "Default Project Color",
+      "description": "Color for new projects",
+      "type": "dropdown",
+      "required": false,
+      "default": "#3B82F6",
+      "data": [
+        {
+          "title": "🔴 Red",
+          "value": "#EF4444"
+        },
+        {
+          "title": "🟠 Orange",
+          "value": "#F97316"
+        },
+        {
+          "title": "🟡 Yellow",
+          "value": "#EAB308"
+        },
+        {
+          "title": "🟢 Green",
+          "value": "#22C55E"
+        },
+        {
+          "title": "🔵 Blue (Default)",
+          "value": "#3B82F6"
+        },
+        {
+          "title": "🟣 Purple",
+          "value": "#8B5CF6"
+        },
+        {
+          "title": "🩷 Pink",
+          "value": "#EC4899"
+        }
+      ]
+    }
+  ],
   "commands": [
     {
       "name": "log-time",
@@ -31,14 +109,14 @@
   ],
   "dependencies": {
     "@raycast/api": "^1.65.0",
-    "@raycast/utils": "^1.12.0",
-    "date-fns": "^3.0.0"
+    "@raycast/utils": "^2.2.2",
+    "date-fns": "^4.1.0"
   },
   "devDependencies": {
-    "@raycast/eslint-config": "^1.0.8",
-    "@types/node": "20.8.10",
-    "@types/react": "18.2.27",
-    "eslint": "^8.51.0",
+    "@raycast/eslint-config": "^2.1.1",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.2.7",
+    "eslint": "^9.39.2",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
@@ -47,6 +125,7 @@
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
-    "publish": "npx @raycast/api@latest publish"
+    "publish": "npx @raycast/api@latest publish",
+    "generate-icon": "node scripts/generate-icon.js"
   }
 }

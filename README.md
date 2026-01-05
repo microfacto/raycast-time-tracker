@@ -81,48 +81,48 @@ Organize your projects:
 
 ## Configuration
 
-Toute la configuration est centralisée dans [src/utils/config.ts](src/utils/config.ts).
+All configuration is centralized in [src/utils/config.ts](src/utils/config.ts).
 
-### Chemin des données
+### Data Path
 
-L'extension détecte automatiquement votre dossier Google Drive :
+The extension automatically detects your cloud storage folder:
 
-**macOS 12+ (nouveau format):**
+**macOS 12+ (new format):**
 
 - `/Users/[user]/Library/CloudStorage/GoogleDrive-[email]/My Drive/TimeTrack/data.json`
 
-**Versions antérieures:**
+**Legacy paths:**
 
 - `~/Google Drive/TimeTrack/data.json`
 - `~/GoogleDrive/TimeTrack/data.json`
 
-### Personnaliser le chemin
+### Customize Path
 
-Pour utiliser un chemin personnalisé, modifiez [src/utils/config.ts](src/utils/config.ts:53) ou définissez la variable d'environnement :
+To use a custom path, modify [src/utils/config.ts](src/utils/config.ts:53) or set the environment variable:
 
 ```bash
 export TIMETRACK_DATA_PATH="/path/to/your/data.json"
 ```
 
-### Autres paramètres configurables
+### Other Configurable Settings
 
-Dans [src/utils/config.ts](src/utils/config.ts), vous pouvez personnaliser :
+In [src/utils/config.ts](src/utils/config.ts), you can customize:
 
-- Couleurs par défaut des projets
-- Format d'affichage des dates
-- Jour de début de semaine
-- Durée d'affichage des notifications
+- Default project colors
+- Date display format
+- Week start day
+- Notification display duration
 
 ## Data Format
 
-Le fichier JSON contient vos projets et entrées :
+The JSON file contains your projects and entries:
 
 ```json
 {
   "projects": [
     {
       "id": "uuid",
-      "name": "Microfacto",
+      "name": "My Project",
       "color": "#FF6B6B",
       "archived": false,
       "createdAt": "2025-01-05T14:30:00Z"
@@ -134,7 +134,7 @@ Le fichier JSON contient vos projets et entrées :
       "projectId": "uuid",
       "date": "2025-01-05",
       "duration": 2.5,
-      "comment": "Dev nouvelle feature",
+      "comment": "Developing new feature",
       "createdAt": "2025-01-05T14:30:00Z"
     }
   ]

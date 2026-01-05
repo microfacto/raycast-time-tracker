@@ -7,7 +7,14 @@
 
 /* eslint-disable @typescript-eslint/ban-types */
 
-type ExtensionPreferences = {}
+type ExtensionPreferences = {
+  /** Data File Path - Custom path for data.json (leave empty to auto-detect: Google Drive, Dropbox, iCloud, or ~/Documents) */
+  "dataPath"?: string,
+  /** Date Format - How dates are displayed in the interface */
+  "dateFormat": "MMM dd, yyyy" | "dd/MM/yyyy" | "MM/dd/yyyy" | "yyyy-MM-dd",
+  /** Default Project Color - Color for new projects */
+  "defaultColor": "#EF4444" | "#F97316" | "#EAB308" | "#22C55E" | "#3B82F6" | "#8B5CF6" | "#EC4899"
+}
 
 /** Preferences accessible in all the extension's commands */
 declare type Preferences = ExtensionPreferences

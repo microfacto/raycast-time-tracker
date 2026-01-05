@@ -1,16 +1,24 @@
 import path from "path";
 import os from "os";
 import { existsSync, readdirSync } from "fs";
+import { getPreferenceValues } from "@raycast/api";
 
 /**
- * Configuration centralisée pour l'extension Time Tracker
+ * Centralized configuration for Time Tracker extension
  */
 
-// Nom du dossier et fichier de données
+// Raycast preferences interface
+interface Preferences {
+  dataPath?: string;
+  dateFormat?: string;
+  defaultColor?: string;
+}
+
+// Data folder and file names
 export const DATA_FOLDER = "TimeTrack";
 export const DATA_FILE = "data.json";
 
-// Couleurs par défaut pour les nouveaux projets
+// Default project colors
 export const DEFAULT_PROJECT_COLORS = [
   "#EF4444", // Red
   "#F97316", // Orange
@@ -23,75 +31,100 @@ export const DEFAULT_PROJECT_COLORS = [
 
 export const DEFAULT_COLOR = "#3B82F6"; // Blue
 
-// Formats de durée acceptés (pour la documentation)
+// Supported duration formats (for documentation)
 export const DURATION_FORMATS = {
-  decimal: "2.5 (heures décimales)",
-  hoursMinutes: "2h30 (heures et minutes)",
-  colon: "2:30 (format horloge)",
-  minutes: "30m (minutes uniquement)",
-  hours: "2h (heures uniquement)",
+  decimal: "2.5 (decimal hours)",
+  hoursMinutes: "2h30 (hours and minutes)",
+  colon: "2:30 (clock format)",
+  minutes: "30m (minutes only)",
+  hours: "2h (hours only)",
 } as const;
 
 /**
- * Trouve automatiquement le chemin Google Drive
- * Supporte les nouvelles (CloudStorage) et anciennes versions
+ * Automatically finds the best storage path
+ * Tries to detect common cloud storage locations
  */
-export function getGoogleDrivePath(): string {
+export function getDefaultStoragePath(): string {
   const homeDir = os.homedir();
 
-  // 1. Nouveau chemin Google Drive (macOS 12+ avec CloudStorage)
-  const cloudStoragePath = path.join(homeDir, "Library", "CloudStorage");
-  if (existsSync(cloudStoragePath)) {
-    try {
-      const entries = readdirSync(cloudStoragePath);
-      const googleDriveFolder = entries.find((entry) => entry.startsWith("GoogleDrive-"));
-      if (googleDriveFolder) {
-        return path.join(cloudStoragePath, googleDriveFolder, "My Drive");
+  // Try to detect cloud storage paths in order of preference
+  const cloudPaths = [
+    // Google Drive (macOS 12+ CloudStorage)
+    () => {
+      const cloudStoragePath = path.join(homeDir, "Library", "CloudStorage");
+      if (existsSync(cloudStoragePath)) {
+        try {
+          const entries = readdirSync(cloudStoragePath);
+          const googleDriveFolder = entries.find((entry) => entry.startsWith("GoogleDrive-"));
+          if (googleDriveFolder) {
+            return path.join(cloudStoragePath, googleDriveFolder, "My Drive");
+          }
+        } catch {
+          // Continue
+        }
       }
-    } catch {
-      // Continue to fallback
-    }
-  }
-
-  // 2. Anciens chemins Google Drive
-  const legacyPaths = [
-    path.join(homeDir, "Google Drive", "My Drive"),
-    path.join(homeDir, "Google Drive"),
-    path.join(homeDir, "GoogleDrive"),
+      return null;
+    },
+    // Legacy Google Drive paths
+    () => {
+      const legacyPaths = [
+        path.join(homeDir, "Google Drive", "My Drive"),
+        path.join(homeDir, "Google Drive"),
+        path.join(homeDir, "GoogleDrive"),
+      ];
+      for (const legacyPath of legacyPaths) {
+        if (existsSync(legacyPath)) {
+          return legacyPath;
+        }
+      }
+      return null;
+    },
+    // Dropbox
+    () => {
+      const dropboxPath = path.join(homeDir, "Dropbox");
+      return existsSync(dropboxPath) ? dropboxPath : null;
+    },
+    // iCloud Drive
+    () => {
+      const icloudPath = path.join(homeDir, "Library", "Mobile Documents", "com~apple~CloudDocs");
+      return existsSync(icloudPath) ? icloudPath : null;
+    },
   ];
 
-  for (const legacyPath of legacyPaths) {
-    if (existsSync(legacyPath)) {
-      return legacyPath;
+  // Try each cloud path
+  for (const getPath of cloudPaths) {
+    const cloudPath = getPath();
+    if (cloudPath) {
+      return cloudPath;
     }
   }
 
-  // 3. Fallback par défaut (sera créé s'il n'existe pas)
-  return path.join(homeDir, "Google Drive");
+  // Default: Use ~/Documents if no cloud storage detected
+  return path.join(homeDir, "Documents");
 }
 
 /**
- * Retourne le chemin complet du fichier de données
+ * Returns the complete data file path
  */
 export function getDataFilePath(): string {
-  const googleDrivePath = getGoogleDrivePath();
-  return path.join(googleDrivePath, DATA_FOLDER, DATA_FILE);
+  const storagePath = getDefaultStoragePath();
+  return path.join(storagePath, DATA_FOLDER, DATA_FILE);
 }
 
 /**
- * Configuration pour l'affichage
+ * UI Configuration
  */
 export const UI_CONFIG = {
-  // Nombre maximum d'entrées affichées par défaut
+  // Maximum number of entries displayed by default
   maxEntriesPerPage: 50,
 
-  // Format d'affichage des dates
+  // Date display format
   dateFormat: "MMM dd, yyyy",
 
-  // Format d'affichage des dates courtes
+  // Short date format
   dateFormatShort: "MMM dd",
 
-  // Jour de début de semaine (1 = Lundi, 0 = Dimanche)
+  // Week start day (1 = Monday, 0 = Sunday)
   weekStartsOn: 1,
 
   // Toast duration (ms)
@@ -99,16 +132,58 @@ export const UI_CONFIG = {
 } as const;
 
 /**
- * Permet de surcharger le chemin de données via variable d'environnement
- * Utile pour les tests ou configurations personnalisées
+ * Get preferences from Raycast
+ */
+function getPreferences(): Preferences {
+  try {
+    return getPreferenceValues<Preferences>();
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Get custom data path from environment variable
+ * Useful for tests or custom configurations
  */
 export function getCustomDataPath(): string | undefined {
   return process.env.TIMETRACK_DATA_PATH;
 }
 
 /**
- * Retourne le chemin final en tenant compte des surcharges
+ * Returns the final data path considering all overrides
+ * Priority: Raycast preference > Environment variable > Auto-detected path
  */
 export function getFinalDataPath(): string {
-  return getCustomDataPath() || getDataFilePath();
+  const preferences = getPreferences();
+
+  // 1. Check Raycast preference
+  if (preferences.dataPath?.trim()) {
+    return preferences.dataPath.trim().replace(/^~/, os.homedir());
+  }
+
+  // 2. Check environment variable
+  const envPath = getCustomDataPath();
+  if (envPath) {
+    return envPath;
+  }
+
+  // 3. Use auto-detected path
+  return getDataFilePath();
+}
+
+/**
+ * Get the default color for new projects from preferences
+ */
+export function getDefaultProjectColor(): string {
+  const preferences = getPreferences();
+  return preferences.defaultColor || DEFAULT_COLOR;
+}
+
+/**
+ * Get the date format from preferences
+ */
+export function getDateFormat(): string {
+  const preferences = getPreferences();
+  return preferences.dateFormat || UI_CONFIG.dateFormat;
 }

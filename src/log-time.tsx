@@ -1,5 +1,5 @@
 import { Form, ActionPanel, Action, showToast, Toast, Icon, useNavigation } from "@raycast/api";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { getProjects, createEntry, getLastUsedProject } from "./utils/storage";
 import { parseDuration, formatDuration } from "./utils/duration";
@@ -191,7 +191,7 @@ function CreateProjectForm({ onProjectCreated }: { onProjectCreated: () => void 
         </ActionPanel>
       }
     >
-      <Form.TextField id="name" title="Project Name" placeholder="Microfacto" autoFocus />
+      <Form.TextField id="name" title="Project Name" placeholder="My Project" autoFocus />
       <Form.Dropdown id="color" title="Color" defaultValue="#3B82F6">
         <Form.Dropdown.Item value="#EF4444" title="Red" icon={{ source: Icon.Circle, tintColor: "#EF4444" }} />
         <Form.Dropdown.Item value="#F97316" title="Orange" icon={{ source: Icon.Circle, tintColor: "#F97316" }} />
