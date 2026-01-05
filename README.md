@@ -1,214 +1,327 @@
-# Time Tracker - Raycast Extension
+<div align="center">
 
-Simple manual time tracking with local JSON storage synchronized via Google Drive.
+# ⏱️ Time Tracker
 
-## Features
+### Simple, powerful manual time tracking for Raycast
 
-- **Log Time**: Quickly log time spent on projects with smart duration parsing
-- **View Entries**: Browse, search, filter and manage your time entries
-- **Manage Projects**: Create, edit, archive, and organize your projects
-- **Smart Defaults**: Auto-selects last used project and today's date
-- **Flexible Duration Input**: Accepts formats like `2.5`, `2h30`, `2:30`, `30m`
-- **Local JSON Storage**: Auto-detects Google Drive path, data stored in `TimeTrack/data.json`
-- **Centralized Config**: All settings in `src/utils/config.ts` for easy customization
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Raycast](https://img.shields.io/badge/Raycast-Extension-red?logo=raycast&logoColor=white)](https://raycast.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-## Installation
+[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Configuration](#-configuration) • [Contributing](#-contributing)
 
-### Prerequisites
+</div>
 
-- [Raycast](https://raycast.com/) installed
-- Node.js 20+ installed
-- Google Drive synced to your machine
+---
 
-### Setup
+## ✨ Features
 
-1. Clone or download this repository
+- **⚡ Quick Time Logging** - Smart duration parsing supports `2.5`, `2h30`, `2:30`, `30m` formats
+- **📊 Entry Management** - Browse, search, filter, and analyze your time entries
+- **🎨 Project Organization** - Color-coded projects with archive support
+- **☁️ Cloud Sync Ready** - Auto-detects Google Drive, Dropbox, iCloud, or uses local storage
+- **🎯 Smart Defaults** - Remembers your last project and pre-fills today's date
+- **⌨️ Keyboard First** - Full keyboard navigation with intuitive shortcuts
+- **🔒 Privacy Focused** - All data stored locally, no external services
+- **🎭 Flexible Storage** - JSON format for easy backup and migration
 
-2. Install dependencies:
-```bash
-npm install
+## 🚀 Installation
+
+### From Raycast Store *(Coming Soon)*
+
+Search for "Time Tracker" in the Raycast Store
+
+### Manual Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/microfacto/raycast-time-tracker.git
+   cd raycast-time-tracker
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start development mode**
+   ```bash
+   npm run dev
+   ```
+
+### Requirements
+
+- [Raycast](https://raycast.com/) (latest version recommended)
+- Node.js 20 or higher
+- macOS 12 or higher
+
+## 📖 Usage
+
+### Log Time
+
+The fastest way to track your work:
+
+1. Launch Raycast and type **"Log Time"**
+2. Select your project *(auto-selects last used)*
+3. Enter duration in any format you prefer
+4. Pick a date *(defaults to today)*
+5. Add an optional comment
+6. Press `Enter` ✨
+
+**Duration Format Examples:**
 ```
-
-3. Development mode:
-```bash
-npm run dev
+2.5     → 2.5 hours
+2h30    → 2 hours 30 minutes
+2:30    → 2 hours 30 minutes
+30m     → 30 minutes
 ```
-
-4. Build for production:
-```bash
-npm run build
-```
-
-## Usage
-
-### Log Time (Main Command)
-
-The fastest way to log time:
-
-1. Open Raycast and type "Log Time"
-2. Select a project (defaults to last used)
-3. Enter duration in any format:
-   - `2.5` (decimal hours)
-   - `2h30` or `2h30m` (hours and minutes)
-   - `2:30` (colon format)
-   - `30m` (minutes only)
-4. Select date (defaults to today)
-5. Add optional comment
-6. Press Enter to save
 
 ### View Entries
 
-Browse and manage your time logs:
+Track and analyze your logged time:
 
-- Filter by time period (Today, This Week, This Month, All Time)
-- Search entries by project name or comment
-- See total hours for filtered period
-- View entries grouped by project
-- Actions:
-  - Edit entry
-  - Copy as text
-  - Delete entry
+- **Filter by period** - Today, This Week, This Month, All Time
+- **Search** - Find entries by project name or comment
+- **Statistics** - See total hours for any period
+- **Actions** - Edit, copy, or delete entries
+
+**Keyboard Shortcuts:**
+- `Cmd + C` - Copy entry as text
+- `Cmd + E` - Edit entry
+- `Ctrl + X` - Delete entry
 
 ### Manage Projects
 
-Organize your projects:
+Organize your work:
 
-- Create new projects with custom colors
-- Edit project details
-- Archive inactive projects
-- Delete projects (removes all associated entries)
-- Filter between active and all projects
+- **Create** projects with custom colors
+- **Edit** project details anytime
+- **Archive** inactive projects *(they won't clutter your list)*
+- **Delete** projects *(removes all associated entries)*
+- **Quick Create** - Press `Cmd + N` anywhere to create a new project
 
-## Configuration
+**Keyboard Shortcuts:**
+- `Cmd + N` - Create new project
+- `Cmd + A` - Archive/unarchive project
+- `Ctrl + X` - Delete project
 
-All configuration is centralized in [src/utils/config.ts](src/utils/config.ts).
+## ⚙️ Configuration
 
-### Data Path
+### Storage Location
 
-The extension automatically detects your cloud storage folder:
+Time Tracker automatically detects your cloud storage:
 
-**macOS 12+ (new format):**
+**Priority Order:**
+1. **Raycast Preference** - Set custom path in extension preferences
+2. **Environment Variable** - `TIMETRACK_DATA_PATH`
+3. **Auto-detection:**
+   - Google Drive (macOS 12+ CloudStorage or legacy paths)
+   - Dropbox (`~/Dropbox`)
+   - iCloud Drive (`~/Library/Mobile Documents/com~apple~CloudDocs`)
+   - Local Documents (`~/Documents`)
 
-- `/Users/[user]/Library/CloudStorage/GoogleDrive-[email]/My Drive/TimeTrack/data.json`
+### Raycast Preferences
 
-**Legacy paths:**
+Configure the extension via Raycast Preferences:
 
-- `~/Google Drive/TimeTrack/data.json`
-- `~/GoogleDrive/TimeTrack/data.json`
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Data File Path** | Custom path for data.json | *Auto-detected* |
+| **Date Format** | Display format for dates | `MMM dd, yyyy` |
+| **Default Project Color** | Color for new projects | Blue (`#3B82F6`) |
 
-### Customize Path
+### Custom Data Path
 
-To use a custom path, modify [src/utils/config.ts](src/utils/config.ts:53) or set the environment variable:
-
+**Via Environment Variable:**
 ```bash
 export TIMETRACK_DATA_PATH="/path/to/your/data.json"
 ```
 
-### Other Configurable Settings
+**Via Raycast Preferences:**
+1. Open Raycast → Extensions → Time Tracker
+2. Click "Configure Extension"
+3. Set "Data File Path"
 
-In [src/utils/config.ts](src/utils/config.ts), you can customize:
+### Date Format Options
 
-- Default project colors
-- Date display format
-- Week start day
-- Notification display duration
+- `MMM dd, yyyy` → Jan 05, 2026
+- `dd/MM/yyyy` → 05/01/2026
+- `MM/dd/yyyy` → 01/05/2026
+- `yyyy-MM-dd` → 2026-01-05
 
-## Data Format
+## 🗂️ Data Format
 
-The JSON file contains your projects and entries:
+Your data is stored in a simple, readable JSON format:
 
 ```json
 {
   "projects": [
     {
-      "id": "uuid",
-      "name": "My Project",
-      "color": "#FF6B6B",
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Website Redesign",
+      "color": "#3B82F6",
       "archived": false,
-      "createdAt": "2025-01-05T14:30:00Z"
+      "createdAt": "2026-01-05T10:00:00.000Z"
     }
   ],
   "entries": [
     {
-      "id": "uuid",
-      "projectId": "uuid",
-      "date": "2025-01-05",
+      "id": "660e8400-e29b-41d4-a716-446655440001",
+      "projectId": "550e8400-e29b-41d4-a716-446655440000",
+      "date": "2026-01-05",
       "duration": 2.5,
-      "comment": "Developing new feature",
-      "createdAt": "2025-01-05T14:30:00Z"
+      "comment": "Implemented new homepage design",
+      "createdAt": "2026-01-05T14:30:00.000Z"
     }
   ]
 }
 ```
 
-## Keyboard Shortcuts
+## 🛠️ Development
 
-### Log Time
-- No shortcuts (optimized for quick entry)
+### Tech Stack
 
-### View Entries
-- `Cmd + C` - Copy entry as text
-- `Ctrl + X` - Delete entry
-
-### Manage Projects
-- `Cmd + N` - Create new project
-- `Cmd + A` - Archive/unarchive project
-- `Ctrl + X` - Delete project
-
-## Tips
-
-- The extension automatically creates the data directory if it doesn't exist
-- Projects are color-coded for easy visual identification
-- Archived projects are hidden by default but can be shown via filter
-- Duration is always displayed in consistent format (e.g., "2.5h")
-- All data syncs automatically via Google Drive
-
-## Development
+- **Runtime:** [Raycast API](https://developers.raycast.com/) 1.65+
+- **Language:** TypeScript 5.2
+- **Date Handling:** [date-fns](https://date-fns.org/) 4.1
+- **Linting:** ESLint 9 with Raycast config
+- **Formatting:** Prettier 3
 
 ### Project Structure
 
 ```
-logtime/
+raycast-time-tracker/
 ├── src/
-│   ├── log-time.tsx           # Main command
-│   ├── view-entries.tsx       # View and manage entries
-│   ├── manage-projects.tsx    # Project management
+│   ├── log-time.tsx              # Quick time entry command
+│   ├── view-entries.tsx          # Browse and manage entries
+│   ├── manage-projects.tsx       # Project management
 │   └── utils/
-│       ├── types.ts           # TypeScript interfaces
-│       ├── duration.ts        # Duration parsing utilities
-│       └── storage.ts         # JSON file operations
-├── package.json
-├── tsconfig.json
-└── README.md
+│       ├── config.ts             # Configuration and paths
+│       ├── storage.ts            # File operations
+│       ├── duration.ts           # Duration parsing
+│       └── types.ts              # TypeScript definitions
+├── assets/
+│   └── command-icon.png          # Extension icon
+├── scripts/
+│   └── generate-icon.js          # Icon generation script
+├── CHANGELOG.md                  # Version history
+├── LICENSE                       # MIT License
+└── README.md                     # This file
 ```
 
-### Scripts
+### Available Scripts
 
-- `npm run dev` - Start development mode
-- `npm run build` - Build extension
-- `npm run lint` - Lint code
-- `npm run fix-lint` - Fix linting issues
-
-## Troubleshooting
-
-### Google Drive folder not found
-
-Make sure Google Drive is properly synced and the path exists:
 ```bash
-ls ~/Google\ Drive/
+npm run dev           # Start development mode
+npm run build         # Build for production
+npm run lint          # Check code quality
+npm run fix-lint      # Auto-fix linting issues
+npm run publish       # Submit to Raycast Store
 ```
 
-### Permission errors
+### Building from Source
 
-Ensure Raycast has permission to access files in your Google Drive folder.
-
-### Data corruption
-
-If the JSON file gets corrupted, simply delete it and the extension will create a fresh one:
 ```bash
-rm ~/Google\ Drive/TimeTrack/data.json
+# Clone the repository
+git clone https://github.com/microfacto/raycast-time-tracker.git
+cd raycast-time-tracker
+
+# Install dependencies
+npm install
+
+# Start development
+npm run dev
+
+# Build for production
+npm run build
 ```
 
-## License
+## 🤝 Contributing
 
-MIT
+Contributions are welcome! Here's how you can help:
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
+
+### Development Guidelines
+
+- Follow the existing code style
+- Add tests for new features
+- Update documentation as needed
+- Use conventional commits
+
+## 🐛 Troubleshooting
+
+<details>
+<summary><strong>Storage folder not found</strong></summary>
+
+**Solution:** Verify your cloud storage is synced:
+```bash
+ls ~/Library/CloudStorage  # macOS 12+
+ls ~/Google\ Drive         # Legacy
+```
+
+If not synced, set a custom path in preferences.
+</details>
+
+<details>
+<summary><strong>Permission errors</strong></summary>
+
+**Solution:** Grant Raycast file access:
+1. System Settings → Privacy & Security → Files and Folders
+2. Enable Raycast access to your storage location
+</details>
+
+<details>
+<summary><strong>Data corruption</strong></summary>
+
+**Solution:** Backup and reset your data file:
+```bash
+# Backup existing data
+cp ~/path/to/data.json ~/path/to/data.json.backup
+
+# Let extension recreate the file
+rm ~/path/to/data.json
+```
+</details>
+
+<details>
+<summary><strong>Extension not appearing</strong></summary>
+
+**Solution:** Rebuild and restart Raycast:
+```bash
+npm run build
+# Then restart Raycast (Cmd+Q and reopen)
+```
+</details>
+
+## 💡 Tips & Tricks
+
+- **Quick Access:** Pin "Log Time" to your favorites for instant access
+- **Color Coding:** Use consistent colors for similar project types
+- **Comments:** Add detailed comments for better time analysis
+- **Archive Often:** Archive completed projects to keep your list clean
+- **Backup:** Your data.json syncs via cloud storage - perfect backup!
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [Raycast](https://raycast.com/)
+- Icon from [Lucide Icons](https://lucide.dev/)
+- Inspired by the need for simple, fast time tracking
+
+---
+
+<div align="center">
+
+**[⬆ back to top](#️-time-tracker)**
+
+Made with ❤️ by [Microfacto](https://github.com/microfacto)
+
+</div>
