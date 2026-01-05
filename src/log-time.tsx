@@ -1,4 +1,12 @@
-import { Form, ActionPanel, Action, showToast, Toast, Icon, useNavigation } from "@raycast/api";
+import {
+  Form,
+  ActionPanel,
+  Action,
+  showToast,
+  Toast,
+  Icon,
+  useNavigation,
+} from "@raycast/api";
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { getProjects, createEntry, getLastUsedProject } from "./utils/storage";
@@ -115,11 +123,20 @@ export default function LogTime() {
       isLoading={isLoading}
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Save Time Entry" icon={Icon.Check} onSubmit={handleSubmit} />
+          <Action.SubmitForm
+            title="Save Time Entry"
+            icon={Icon.Check}
+            onSubmit={handleSubmit}
+          />
         </ActionPanel>
       }
     >
-      <Form.Dropdown id="projectId" title="Project" defaultValue={defaultProjectId} storeValue>
+      <Form.Dropdown
+        id="projectId"
+        title="Project"
+        defaultValue={defaultProjectId}
+        storeValue
+      >
         {projects.map((project) => (
           <Form.Dropdown.Item
             key={project.id}
@@ -140,13 +157,21 @@ export default function LogTime() {
 
       <Form.DatePicker id="date" title="Date" defaultValue={new Date()} />
 
-      <Form.TextArea id="comment" title="Comment" placeholder="What did you work on?" />
+      <Form.TextArea
+        id="comment"
+        title="Comment"
+        placeholder="What did you work on?"
+      />
     </Form>
   );
 }
 
 // Quick inline form for creating a project when none exist
-function CreateProjectForm({ onProjectCreated }: { onProjectCreated: () => void }) {
+function CreateProjectForm({
+  onProjectCreated,
+}: {
+  onProjectCreated: () => void;
+}) {
   const { pop } = useNavigation();
 
   async function handleSubmit(values: { name: string; color: string }) {
@@ -187,19 +212,56 @@ function CreateProjectForm({ onProjectCreated }: { onProjectCreated: () => void 
     <Form
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Create Project" icon={Icon.Plus} onSubmit={handleSubmit} />
+          <Action.SubmitForm
+            title="Create Project"
+            icon={Icon.Plus}
+            onSubmit={handleSubmit}
+          />
         </ActionPanel>
       }
     >
-      <Form.TextField id="name" title="Project Name" placeholder="My Project" autoFocus />
+      <Form.TextField
+        id="name"
+        title="Project Name"
+        placeholder="My Project"
+        autoFocus
+      />
       <Form.Dropdown id="color" title="Color" defaultValue="#3B82F6">
-        <Form.Dropdown.Item value="#EF4444" title="Red" icon={{ source: Icon.Circle, tintColor: "#EF4444" }} />
-        <Form.Dropdown.Item value="#F97316" title="Orange" icon={{ source: Icon.Circle, tintColor: "#F97316" }} />
-        <Form.Dropdown.Item value="#EAB308" title="Yellow" icon={{ source: Icon.Circle, tintColor: "#EAB308" }} />
-        <Form.Dropdown.Item value="#22C55E" title="Green" icon={{ source: Icon.Circle, tintColor: "#22C55E" }} />
-        <Form.Dropdown.Item value="#3B82F6" title="Blue" icon={{ source: Icon.Circle, tintColor: "#3B82F6" }} />
-        <Form.Dropdown.Item value="#8B5CF6" title="Purple" icon={{ source: Icon.Circle, tintColor: "#8B5CF6" }} />
-        <Form.Dropdown.Item value="#EC4899" title="Pink" icon={{ source: Icon.Circle, tintColor: "#EC4899" }} />
+        <Form.Dropdown.Item
+          value="#EF4444"
+          title="Red"
+          icon={{ source: Icon.Circle, tintColor: "#EF4444" }}
+        />
+        <Form.Dropdown.Item
+          value="#F97316"
+          title="Orange"
+          icon={{ source: Icon.Circle, tintColor: "#F97316" }}
+        />
+        <Form.Dropdown.Item
+          value="#EAB308"
+          title="Yellow"
+          icon={{ source: Icon.Circle, tintColor: "#EAB308" }}
+        />
+        <Form.Dropdown.Item
+          value="#22C55E"
+          title="Green"
+          icon={{ source: Icon.Circle, tintColor: "#22C55E" }}
+        />
+        <Form.Dropdown.Item
+          value="#3B82F6"
+          title="Blue"
+          icon={{ source: Icon.Circle, tintColor: "#3B82F6" }}
+        />
+        <Form.Dropdown.Item
+          value="#8B5CF6"
+          title="Purple"
+          icon={{ source: Icon.Circle, tintColor: "#8B5CF6" }}
+        />
+        <Form.Dropdown.Item
+          value="#EC4899"
+          title="Pink"
+          icon={{ source: Icon.Circle, tintColor: "#EC4899" }}
+        />
       </Form.Dropdown>
     </Form>
   );

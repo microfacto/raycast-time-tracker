@@ -1,6 +1,12 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { TimeData, Project, TimeEntry, NewTimeEntry, NewProject } from "./types";
+import {
+  TimeData,
+  Project,
+  TimeEntry,
+  NewTimeEntry,
+  NewProject,
+} from "./types";
 import { getFinalDataPath } from "./config";
 
 // Generate UUID v4
@@ -65,7 +71,9 @@ export async function writeData(data: TimeData): Promise<void> {
 
 export async function getProjects(includeArchived = false): Promise<Project[]> {
   const data = await readData();
-  return includeArchived ? data.projects : data.projects.filter((p) => !p.archived);
+  return includeArchived
+    ? data.projects
+    : data.projects.filter((p) => !p.archived);
 }
 
 export async function getProject(id: string): Promise<Project | null> {
@@ -87,7 +95,10 @@ export async function createProject(newProject: NewProject): Promise<Project> {
   return project;
 }
 
-export async function updateProject(id: string, updates: Partial<Omit<Project, "id">>): Promise<Project | null> {
+export async function updateProject(
+  id: string,
+  updates: Partial<Omit<Project, "id">>,
+): Promise<Project | null> {
   const data = await readData();
   const index = data.projects.findIndex((p) => p.id === id);
   if (index === -1) return null;
@@ -145,7 +156,10 @@ export async function createEntry(newEntry: NewTimeEntry): Promise<TimeEntry> {
   return entry;
 }
 
-export async function updateEntry(id: string, updates: Partial<Omit<TimeEntry, "id" | "createdAt">>): Promise<TimeEntry | null> {
+export async function updateEntry(
+  id: string,
+  updates: Partial<Omit<TimeEntry, "id" | "createdAt">>,
+): Promise<TimeEntry | null> {
   const data = await readData();
   const index = data.entries.findIndex((e) => e.id === id);
   if (index === -1) return null;
@@ -176,7 +190,9 @@ export async function getLastUsedProject(): Promise<Project | null> {
   if (data.entries.length === 0) return null;
 
   // Get the most recent entry
-  const sortedEntries = data.entries.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const sortedEntries = data.entries.sort((a, b) =>
+    b.createdAt.localeCompare(a.createdAt),
+  );
   const lastProjectId = sortedEntries[0].projectId;
 
   return data.projects.find((p) => p.id === lastProjectId) || null;

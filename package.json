@@ -5,10 +5,6 @@
   "description": "Simple manual time tracking with local JSON storage",
   "icon": "command-icon.png",
   "author": "julien-microfacto",
-  "owner": "julien-microfacto",
-  "contributors": [
-    "julien-microfacto"
-  ],
   "categories": [
     "Productivity"
   ],

@@ -7,13 +7,31 @@ import {
   Toast,
   confirmAlert,
   Alert,
-  Color,
   Clipboard,
+  Form,
+  useNavigation,
 } from "@raycast/api";
 import React, { useEffect, useState } from "react";
-import { format, parseISO, startOfWeek, startOfMonth, endOfWeek, endOfMonth, isWithinInterval } from "date-fns";
-import { getEntries, getProjects, deleteEntry, updateEntry } from "./utils/storage";
-import { formatDuration, formatDurationDetailed } from "./utils/duration";
+import {
+  format,
+  parseISO,
+  startOfWeek,
+  startOfMonth,
+  endOfWeek,
+  endOfMonth,
+  isWithinInterval,
+} from "date-fns";
+import {
+  getEntries,
+  getProjects,
+  deleteEntry,
+  updateEntry,
+} from "./utils/storage";
+import {
+  formatDuration,
+  formatDurationDetailed,
+  parseDuration,
+} from "./utils/duration";
 import { TimeEntry, Project } from "./utils/types";
 import { getDateFormat } from "./utils/config";
 
@@ -30,7 +48,10 @@ export default function ViewEntries() {
 
   async function loadEntries() {
     try {
-      const [entriesList, projectsList] = await Promise.all([getEntries(), getProjects(true)]);
+      const [entriesList, projectsList] = await Promise.all([
+        getEntries(),
+        getProjects(true),
+      ]);
 
       // Map entries with their projects
       const entriesWithProjects = entriesList
@@ -111,7 +132,10 @@ export default function ViewEntries() {
         const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
         return entries.filter((e) => {
           const entryDate = parseISO(e.date);
-          return isWithinInterval(entryDate, { start: weekStart, end: weekEnd });
+          return isWithinInterval(entryDate, {
+            start: weekStart,
+            end: weekEnd,
+          });
         });
       }
       case "month": {
@@ -119,7 +143,10 @@ export default function ViewEntries() {
         const monthEnd = endOfMonth(now);
         return entries.filter((e) => {
           const entryDate = parseISO(e.date);
-          return isWithinInterval(entryDate, { start: monthStart, end: monthEnd });
+          return isWithinInterval(entryDate, {
+            start: monthStart,
+            end: monthEnd,
+          });
         });
       }
       default:
@@ -131,7 +158,10 @@ export default function ViewEntries() {
   const dateFormat = getDateFormat();
 
   // Calculate total duration
-  const totalHours = filteredEntries.reduce((sum, entry) => sum + entry.duration, 0);
+  const totalHours = filteredEntries.reduce(
+    (sum, entry) => sum + entry.duration,
+    0,
+  );
 
   // Group entries by project
   const groupedEntries = filteredEntries.reduce(
@@ -143,7 +173,7 @@ export default function ViewEntries() {
       acc[key].push(entry);
       return acc;
     },
-    {} as Record<string, EntryWithProject[]>
+    {} as Record<string, EntryWithProject[]>,
   );
 
   return (
@@ -151,7 +181,11 @@ export default function ViewEntries() {
       isLoading={isLoading}
       searchBarPlaceholder="Search entries..."
       searchBarAccessory={
-        <List.Dropdown tooltip="Time Period" value={filter} onChange={(value) => setFilter(value as TimeFilter)}>
+        <List.Dropdown
+          tooltip="Time Period"
+          value={filter}
+          onChange={(value) => setFilter(value as TimeFilter)}
+        >
           <List.Dropdown.Item title="All Time" value="all" />
           <List.Dropdown.Item title="Today" value="today" />
           <List.Dropdown.Item title="This Week" value="week" />
@@ -159,7 +193,10 @@ export default function ViewEntries() {
         </List.Dropdown>
       }
     >
-      <List.Section title="Summary" subtitle={`${filteredEntries.length} entries`}>
+      <List.Section
+        title="Summary"
+        subtitle={`${filteredEntries.length} entries`}
+      >
         <List.Item
           title="Total Time"
           subtitle={formatDurationDetailed(totalHours)}
@@ -168,7 +205,10 @@ export default function ViewEntries() {
       </List.Section>
 
       {Object.entries(groupedEntries).map(([projectName, projectEntries]) => {
-        const projectTotal = projectEntries.reduce((sum, e) => sum + e.duration, 0);
+        const projectTotal = projectEntries.reduce(
+          (sum, e) => sum + e.duration,
+          0,
+        );
         const projectColor = projectEntries[0]?.project.color;
 
         return (
@@ -183,7 +223,9 @@ export default function ViewEntries() {
                 title={format(parseISO(entry.date), dateFormat)}
                 subtitle={entry.comment || "No comment"}
                 icon={{ source: Icon.Circle, tintColor: projectColor }}
-                accessories={[{ text: formatDuration(entry.duration), icon: Icon.Clock }]}
+                accessories={[
+                  { text: formatDuration(entry.duration), icon: Icon.Clock },
+                ]}
                 actions={
                   <ActionPanel>
                     <Action.Push
@@ -216,12 +258,21 @@ export default function ViewEntries() {
 }
 
 // Edit entry form
-function EditEntry({ entry, onSave }: { entry: EntryWithProject; onSave: () => void }) {
-  const { pop } = require("@raycast/api").useNavigation();
+function EditEntry({
+  entry,
+  onSave,
+}: {
+  entry: EntryWithProject;
+  onSave: () => void;
+}) {
+  const { pop } = useNavigation();
 
-  async function handleSubmit(values: { duration: string; comment: string; date: Date }) {
+  async function handleSubmit(values: {
+    duration: string;
+    comment: string;
+    date: Date;
+  }) {
     try {
-      const { parseDuration } = require("./utils/duration");
       const duration = parseDuration(values.duration);
       if (!duration || duration <= 0) {
         await showToast({
@@ -254,28 +305,36 @@ function EditEntry({ entry, onSave }: { entry: EntryWithProject; onSave: () => v
     }
   }
 
-  const { Form } = require("@raycast/api");
-
   return (
     <Form
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Save Changes" icon={Icon.Check} onSubmit={handleSubmit} />
+          <Action.SubmitForm
+            title="Save Changes"
+            icon={Icon.Check}
+            onSubmit={handleSubmit}
+          />
         </ActionPanel>
       }
     >
-      <Form.Description
-        title="Project"
-        text={entry.project.name}
-      />
+      <Form.Description title="Project" text={entry.project.name} />
       <Form.TextField
         id="duration"
         title="Duration"
         placeholder="2.5, 2h30, 2:30"
         defaultValue={formatDuration(entry.duration)}
       />
-      <Form.DatePicker id="date" title="Date" defaultValue={parseISO(entry.date)} />
-      <Form.TextArea id="comment" title="Comment" placeholder="What did you work on?" defaultValue={entry.comment} />
+      <Form.DatePicker
+        id="date"
+        title="Date"
+        defaultValue={parseISO(entry.date)}
+      />
+      <Form.TextArea
+        id="comment"
+        title="Comment"
+        placeholder="What did you work on?"
+        defaultValue={entry.comment}
+      />
     </Form>
   );
 }

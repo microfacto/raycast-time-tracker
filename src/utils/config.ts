@@ -55,7 +55,9 @@ export function getDefaultStoragePath(): string {
       if (existsSync(cloudStoragePath)) {
         try {
           const entries = readdirSync(cloudStoragePath);
-          const googleDriveFolder = entries.find((entry) => entry.startsWith("GoogleDrive-"));
+          const googleDriveFolder = entries.find((entry) =>
+            entry.startsWith("GoogleDrive-"),
+          );
           if (googleDriveFolder) {
             return path.join(cloudStoragePath, googleDriveFolder, "My Drive");
           }
@@ -86,7 +88,12 @@ export function getDefaultStoragePath(): string {
     },
     // iCloud Drive
     () => {
-      const icloudPath = path.join(homeDir, "Library", "Mobile Documents", "com~apple~CloudDocs");
+      const icloudPath = path.join(
+        homeDir,
+        "Library",
+        "Mobile Documents",
+        "com~apple~CloudDocs",
+      );
       return existsSync(icloudPath) ? icloudPath : null;
     },
   ];
