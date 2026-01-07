@@ -22,6 +22,7 @@ import {
   endOfWeek,
   endOfMonth,
   isWithinInterval,
+  subDays,
 } from "date-fns";
 import {
   getEntries,
@@ -41,7 +42,7 @@ interface EntryWithProject extends TimeEntry {
   project: Project;
 }
 
-type TimeFilter = "all" | "today" | "week" | "month";
+type TimeFilter = "all" | "today" | "yesterday" | "week" | "month";
 
 export default function ViewEntries() {
   const [entries, setEntries] = useState<EntryWithProject[]>([]);
@@ -125,10 +126,13 @@ export default function ViewEntries() {
   function getFilteredEntries(): EntryWithProject[] {
     const now = new Date();
     const today = format(now, "yyyy-MM-dd");
+    const yesterday = format(subDays(now, 1), "yyyy-MM-dd");
 
     switch (filter) {
       case "today":
         return entries.filter((e) => e.date === today);
+      case "yesterday":
+        return entries.filter((e) => e.date === yesterday);
       case "week": {
         const weekStart = startOfWeek(now, { weekStartsOn: 1 });
         const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
@@ -190,6 +194,7 @@ export default function ViewEntries() {
         >
           <List.Dropdown.Item title="All Time" value="all" />
           <List.Dropdown.Item title="Today" value="today" />
+          <List.Dropdown.Item title="Yesterday" value="yesterday" />
           <List.Dropdown.Item title="This Week" value="week" />
           <List.Dropdown.Item title="This Month" value="month" />
         </List.Dropdown>
@@ -203,6 +208,28 @@ export default function ViewEntries() {
           title="Total Time"
           subtitle={formatDurationDetailed(totalHours)}
           accessories={[{ text: formatDuration(totalHours), icon: Icon.Clock }]}
+          actions={
+            <ActionPanel>
+              <Action
+                title="Log Time"
+                icon={Icon.Clock}
+                shortcut={{ modifiers: ["cmd"], key: "l" }}
+                onAction={() => launchCommand({ name: "log-time", type: LaunchType.UserInitiated })}
+              />
+              <Action
+                title="Manage Projects"
+                icon={Icon.Folder}
+                shortcut={{ modifiers: ["cmd"], key: "p" }}
+                onAction={() => launchCommand({ name: "manage-projects", type: LaunchType.UserInitiated })}
+              />
+              <Action
+                title="Time Summary"
+                icon={Icon.BarChart}
+                shortcut={{ modifiers: ["cmd"], key: "s" }}
+                onAction={() => launchCommand({ name: "time-summary", type: LaunchType.UserInitiated })}
+              />
+            </ActionPanel>
+          }
         />
       </List.Section>
 
@@ -288,8 +315,20 @@ function EditEntry({
   onSave: () => void;
 }) {
   const { pop } = useNavigation();
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProjects() {
+      const projectsList = await getProjects();
+      setProjects(projectsList);
+      setIsLoading(false);
+    }
+    loadProjects();
+  }, []);
 
   async function handleSubmit(values: {
+    projectId: string;
     duration: string;
     comment: string;
     date: Date;
@@ -306,6 +345,7 @@ function EditEntry({
       }
 
       await updateEntry(entry.id, {
+        projectId: values.projectId,
         duration,
         comment: values.comment.trim(),
         date: format(values.date, "yyyy-MM-dd"),
@@ -329,6 +369,7 @@ function EditEntry({
 
   return (
     <Form
+      isLoading={isLoading}
       actions={
         <ActionPanel>
           <Action.SubmitForm
@@ -339,7 +380,16 @@ function EditEntry({
         </ActionPanel>
       }
     >
-      <Form.Description title="Project" text={entry.project.name} />
+      <Form.Dropdown id="projectId" title="Project" defaultValue={entry.projectId}>
+        {projects.map((project) => (
+          <Form.Dropdown.Item
+            key={project.id}
+            value={project.id}
+            title={project.name}
+            icon={{ source: Icon.Circle, tintColor: project.color }}
+          />
+        ))}
+      </Form.Dropdown>
       <Form.TextField
         id="duration"
         title="Duration"
