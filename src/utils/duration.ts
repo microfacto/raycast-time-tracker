@@ -30,9 +30,12 @@ export function parseDuration(input: string): number | null {
     return hours + minutes / 60;
   }
 
-  // Format: "2h"
-  const hoursMatch = trimmed.match(/^(\d+)h$/);
+  // Format: "2h" or "1.5h" or "2,5h" (hours with optional decimal)
+  const hoursMatch = trimmed.match(/^(\d+)([.,](\d+))?h$/);
   if (hoursMatch) {
+    if (hoursMatch[3]) {
+      return parseFloat(hoursMatch[1] + "." + hoursMatch[3]);
+    }
     return parseInt(hoursMatch[1], 10);
   }
 
