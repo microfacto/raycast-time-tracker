@@ -10,6 +10,8 @@ import {
   Clipboard,
   Form,
   useNavigation,
+  LaunchType,
+  launchCommand,
 } from "@raycast/api";
 import React, { useEffect, useState } from "react";
 import {
@@ -44,7 +46,7 @@ type TimeFilter = "all" | "today" | "week" | "month";
 export default function ViewEntries() {
   const [entries, setEntries] = useState<EntryWithProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState<TimeFilter>("all");
+  const [filter, setFilter] = useState<TimeFilter>("today");
 
   async function loadEntries() {
     try {
@@ -246,6 +248,26 @@ export default function ViewEntries() {
                       shortcut={{ modifiers: ["ctrl"], key: "x" }}
                       onAction={() => handleDelete(entry.id)}
                     />
+                    <ActionPanel.Section>
+                      <Action
+                        title="Log Time"
+                        icon={Icon.Clock}
+                        shortcut={{ modifiers: ["cmd"], key: "l" }}
+                        onAction={() => launchCommand({ name: "log-time", type: LaunchType.UserInitiated })}
+                      />
+                      <Action
+                        title="Manage Projects"
+                        icon={Icon.Folder}
+                        shortcut={{ modifiers: ["cmd"], key: "p" }}
+                        onAction={() => launchCommand({ name: "manage-projects", type: LaunchType.UserInitiated })}
+                      />
+                      <Action
+                        title="Time Summary"
+                        icon={Icon.BarChart}
+                        shortcut={{ modifiers: ["cmd"], key: "s" }}
+                        onAction={() => launchCommand({ name: "time-summary", type: LaunchType.UserInitiated })}
+                      />
+                    </ActionPanel.Section>
                   </ActionPanel>
                 }
               />
@@ -327,6 +349,7 @@ function EditEntry({
       <Form.DatePicker
         id="date"
         title="Date"
+        type={Form.DatePicker.Type.Date}
         defaultValue={parseISO(entry.date)}
       />
       <Form.TextArea

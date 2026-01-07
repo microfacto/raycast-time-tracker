@@ -101,6 +101,12 @@
       "title": "Manage Projects",
       "description": "Add, edit, and archive projects",
       "mode": "view"
+    },
+    {
+      "name": "time-summary",
+      "title": "Time Summary",
+      "description": "View time summary by project and week",
+      "mode": "view"
     }
   ],
   "dependencies": {
