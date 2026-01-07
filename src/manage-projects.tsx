@@ -9,6 +9,8 @@ import {
   Alert,
   Form,
   useNavigation,
+  LaunchType,
+  launchCommand,
 } from "@raycast/api";
 import React, { useEffect, useState } from "react";
 import {
@@ -152,7 +154,7 @@ export default function ManageProjects() {
                   <Action
                     title={project.archived ? "Unarchive" : "Archive"}
                     icon={Icon.Box}
-                    shortcut={{ modifiers: ["cmd"], key: "a" }}
+                    shortcut={{ modifiers: ["cmd", "shift"], key: "a" }}
                     onAction={() => handleToggleArchive(project)}
                   />
                   <ActionPanel.Section>
@@ -161,6 +163,24 @@ export default function ManageProjects() {
                       icon={Icon.Plus}
                       shortcut={{ modifiers: ["cmd"], key: "n" }}
                       target={<CreateProjectForm onSave={loadProjects} />}
+                    />
+                    <Action
+                      title="Log Time"
+                      icon={Icon.Clock}
+                      shortcut={{ modifiers: ["cmd"], key: "l" }}
+                      onAction={() => launchCommand({ name: "log-time", type: LaunchType.UserInitiated })}
+                    />
+                    <Action
+                      title="View Time Entries"
+                      icon={Icon.List}
+                      shortcut={{ modifiers: ["cmd"], key: "e" }}
+                      onAction={() => launchCommand({ name: "view-entries", type: LaunchType.UserInitiated })}
+                    />
+                    <Action
+                      title="Time Summary"
+                      icon={Icon.BarChart}
+                      shortcut={{ modifiers: ["cmd"], key: "s" }}
+                      onAction={() => launchCommand({ name: "time-summary", type: LaunchType.UserInitiated })}
                     />
                   </ActionPanel.Section>
                   <ActionPanel.Section>

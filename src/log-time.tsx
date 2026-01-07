@@ -6,6 +6,8 @@ import {
   Toast,
   Icon,
   useNavigation,
+  LaunchType,
+  launchCommand,
 } from "@raycast/api";
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
@@ -135,6 +137,24 @@ export default function LogTime() {
               shortcut={{ modifiers: ["cmd"], key: "n" }}
               target={<CreateProjectForm onProjectCreated={loadProjects} />}
             />
+            <Action
+              title="View Time Entries"
+              icon={Icon.List}
+              shortcut={{ modifiers: ["cmd"], key: "e" }}
+              onAction={() => launchCommand({ name: "view-entries", type: LaunchType.UserInitiated })}
+            />
+            <Action
+              title="Time Summary"
+              icon={Icon.BarChart}
+              shortcut={{ modifiers: ["cmd"], key: "s" }}
+              onAction={() => launchCommand({ name: "time-summary", type: LaunchType.UserInitiated })}
+            />
+            <Action
+              title="Manage Projects"
+              icon={Icon.Folder}
+              shortcut={{ modifiers: ["cmd"], key: "p" }}
+              onAction={() => launchCommand({ name: "manage-projects", type: LaunchType.UserInitiated })}
+            />
           </ActionPanel.Section>
         </ActionPanel>
       }
@@ -163,7 +183,7 @@ export default function LogTime() {
         autoFocus
       />
 
-      <Form.DatePicker id="date" title="Date" defaultValue={new Date()} />
+      <Form.DatePicker id="date" title="Date" type={Form.DatePicker.Type.Date} defaultValue={new Date()} />
 
       <Form.TextArea
         id="comment"
