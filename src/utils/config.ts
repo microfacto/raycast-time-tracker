@@ -49,21 +49,45 @@ export function getDefaultStoragePath(): string {
 
   // Try to detect cloud storage paths in order of preference
   const cloudPaths = [
-    // Google Drive (macOS 12+ CloudStorage)
+    // Google Drive (macOS 12+ CloudStorage) — root folder name is localized
     () => {
       const cloudStoragePath = path.join(homeDir, "Library", "CloudStorage");
-      if (existsSync(cloudStoragePath)) {
-        try {
-          const entries = readdirSync(cloudStoragePath);
-          const googleDriveFolder = entries.find((entry) =>
-            entry.startsWith("GoogleDrive-"),
-          );
-          if (googleDriveFolder) {
-            return path.join(cloudStoragePath, googleDriveFolder, "My Drive");
-          }
-        } catch {
-          // Continue
+      if (!existsSync(cloudStoragePath)) return null;
+      try {
+        const entries = readdirSync(cloudStoragePath);
+        const googleDriveFolder = entries.find((entry) =>
+          entry.startsWith("GoogleDrive-"),
+        );
+        if (!googleDriveFolder) return null;
+        const accountPath = path.join(cloudStoragePath, googleDriveFolder);
+        const driveRootNames = [
+          "My Drive", // en
+          "Mon Drive", // fr
+          "Meine Ablage", // de
+          "Mi unidad", // es
+          "Il mio Drive", // it
+          "Meu Drive", // pt
+          "Mijn Drive", // nl
+          "マイドライブ", // ja
+          "我的云端硬盘", // zh-CN
+          "我的雲端硬碟", // zh-TW
+        ];
+        for (const name of driveRootNames) {
+          const candidate = path.join(accountPath, name);
+          if (existsSync(candidate)) return candidate;
         }
+        // Fallback: try to list the account folder and pick the first dir
+        try {
+          const accountEntries = readdirSync(accountPath);
+          const firstDir = accountEntries.find(
+            (e) => !e.startsWith(".") && existsSync(path.join(accountPath, e)),
+          );
+          if (firstDir) return path.join(accountPath, firstDir);
+        } catch {
+          // TCC may block the listing — give up silently
+        }
+      } catch {
+        // Continue
       }
       return null;
     },

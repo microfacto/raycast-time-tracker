@@ -1,5 +1,11 @@
 # Time Tracker Changelog
 
+## [Unreleased] - 2026-04-29
+
+### Fixed
+
+- Google Drive auto-detection now supports localized root folder names (`Mon Drive`, `Meine Ablage`, `Mi unidad`, `Il mio Drive`, `Meu Drive`, `Mijn Drive`, `マイドライブ`, `我的云端硬盘`, `我的雲端硬碟`) in addition to `My Drive`. Falls back to the first visible directory in the Drive account folder when no known name matches.
+
 ## [Initial Version] - 2026-01-05
 
 ### Added

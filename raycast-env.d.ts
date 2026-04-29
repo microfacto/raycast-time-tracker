@@ -26,6 +26,8 @@ declare namespace Preferences {
   export type ViewEntries = ExtensionPreferences & {}
   /** Preferences accessible in the `manage-projects` command */
   export type ManageProjects = ExtensionPreferences & {}
+  /** Preferences accessible in the `time-summary` command */
+  export type TimeSummary = ExtensionPreferences & {}
 }
 
 declare namespace Arguments {
@@ -35,5 +37,7 @@ declare namespace Arguments {
   export type ViewEntries = {}
   /** Arguments passed to the `manage-projects` command */
   export type ManageProjects = {}
+  /** Arguments passed to the `time-summary` command */
+  export type TimeSummary = {}
 }
 
